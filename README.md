@@ -37,12 +37,13 @@ because the XTEA algorithm requires data-to-encrypt to be in multiples of 8 byte
 ```php
 <?php 
 require_once('xtea.class.php');
-$key_binary = random_bytes(4 * 4);
-$keys_array = XTEA::binary_key_to_int_array($key_binary);
-$data = "Hello, World!";
-$encrypted = XTEA::encrypt($data, $keys_array);
+$keys_binary = random_bytes(4 * 4);
+$keys_array = XTEA::binary_key_to_int_array($keys_binary);
+$data = "Hello, World!123";
+$encrypted = XTEA::encrypt($data, $keys_array, XTEA::PAD_NONE);
 $decrypted = XTEA::decrypt($encrypted, $keys_array);
 var_dump($data, $encrypted, $decrypted);
+
 ```
 you will get 
 ```
