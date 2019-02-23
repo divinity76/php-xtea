@@ -302,7 +302,7 @@ declare (strict_types = 1);
      *  @since          2004/Sep/06
      *  @author         Jeroen Derks <jeroen@derks.it>
      */
-    protected function _add($i1, $i2)
+    protected static function _add($i1, $i2)
     {
         $result = 0.0;
         foreach ([$i1, $i2] as $value) {
