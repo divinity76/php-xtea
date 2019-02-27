@@ -1,6 +1,40 @@
 # php-xtea
 XTEA implementation in PHP
 
+# usage
+note that the entire library is binary-safe, data-to-encrypt and encryption keys and data-to-decrypt and the resulting decrypted data may be binary data.
+
+the signature for XTEA::encrypt is
+```php
+public static function encrypt(string $data, array $keys,
+    int $padding_scheme = self::PAD_0x00, int $rounds = 32) : string
+```
+- string $data is the data to be encrypted
+- array $keys is an array containing the 4 xtea keys as integers (if you have a binary key, you can convert it to an int array with the XTEA::binary_key_to_int_array() function)
+- int $padding_scheme is the padding scheme to use, there are 3 padding schemes: the default `XTEA::PAD_0x00` will right-pad with null-bytes, `XTEA::PAD_RANDOM` will right-pad with cryptographically-secure random bytes, and `XTEA::PAD_NONE` will not do any padding but throw an InvalidArgumentException if padding is required. 
+- int $rounds is how many rounds to encrypt, the default is 32, and 32 is recommended by XTEA's designers `Roger Needham` and `David Wheeler`, 0 rounds will effectively result in no encryption whatsoever with only padding being applied.
+
+the return string is the encrypted binary data.
+
+the signature for XTEA::decrypt is
+```php
+public static function decrypt(string $data, array $keys, int $rounds = 32) : string
+```
+- string $data is the encrypted binary data
+- array $keys is an array containing the 4 xtea keys as integers (if you have a binary key, you can convert it to an int array with the XTEA::binary_key_to_int_array() function)
+- int $rounds is how many rounds was used during encryption. the default is 32, and 32 is recommended by XTEA's designers `Roger Needham` and `David Wheeler`, and 0 rounds effectively means that no encryption was applied at all.
+
+the return string is the decrypted (binary?) data.
+
+the signature for XTEA::binary_key_to_int_array is
+```php
+public static function binary_key_to_int_array(string $key, int $padding_scheme = self::PAD_0x00) : array
+```
+- string $key is the (binary?) encryption key, it can be anywhere between 0-16 bytes (inclusive), except if the padding scheme is XTEA::PAD_NONE, in which case it needs to be _exactly_ 16 bytes long. if the key is longer than 16 bytes, an InvalidArgumentException is thrown.
+- int $padding_scheme is the padding scheme to use when the key is less than 16 bytes long, 2 padding schemes are supported: `XTEA::PAD_0x00` will right-pad it with null-bytes, and `XTEA::PAD_NONE` will not do any padding, but throw an InvalidArgumentException if the key length is not exactly 16 bytes long. (i intentionally did not add support for XTEA::PAD_RANDOM here because i believe that supporting *ANY* non-deterministic padding scheme for the key is a bad idea.)
+
+the return is an array containing the 4 resulting XTEA keys as php integers, which can be used with XTEA::encrypt and XTEA::decrypt
+
 # examples
 
 ```php
